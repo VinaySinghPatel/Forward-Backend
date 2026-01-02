@@ -15,7 +15,10 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 // Static files (for media uploads)
-app.use("/uploads", express.static("uploads"));
+import path from "path";
+
+// Static files (for media uploads)
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // Routes
 app.use("/api/auth", authRoutes);
