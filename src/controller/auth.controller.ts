@@ -23,21 +23,26 @@ export const registerUser = async (req: Request, res: Response) => {
     }
 
     const hashedPassword = await hashPassword(password);
-    const otp = generateOtp();
+    // const otp = generateOtp();
 
-    await User.create({
+    const user = await User.create({
       name,
       email,
       password: hashedPassword,
       phoneNumber,
-      emailOtp: otp,
-      emailOtpExpires: new Date(Date.now() + 10 * 60 * 1000), // 10 min
+      isPhoneVerified: true, // Auto-verify since we are skipping OTP
+      // emailOtp: otp,
+      // emailOtpExpires: new Date(Date.now() + 10 * 60 * 1000), // 10 min
     });
 
-    await sendOtpEmail(email, otp);
+    // await sendOtpEmail(email, otp);
+
+    const token = generateToken({ id: user._id, email: user.email });
 
     res.status(201).json({
-      message: "User registered. OTP sent to email.",
+      message: "User registered successfully.",
+      token,
+      user,
     });
   } catch (error) {
     console.error("Error in registerUser:", error);
